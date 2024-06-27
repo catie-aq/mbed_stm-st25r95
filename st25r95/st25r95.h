@@ -4,14 +4,16 @@
  */
 #ifndef CATIE_SIXTRON_ST25R95_H_
 #define CATIE_SIXTRON_ST25R95_H_
+#include "mbed.h"
 
-namespace sixtron {
-
-class st25r95 {
+class ST25R95 {
 public:
-    st25r95();
+    ST25R95(SPI *spi, DigitalOut *chip_select, DigitalOut *interrupt_input);
+    // ST25R95(SPI *spi, DigitalOut *chip_select, DigitalOut *interrupt_input);
+private:
+    SPI *_spi_address;
+    DigitalOut *_chip_select;
+    DigitalOut *_interrupt_input;
 };
-
-} // namespace sixtron
 
 #endif // CATIE_SIXTRON_ST25R95_H_
