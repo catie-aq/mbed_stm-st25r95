@@ -149,17 +149,12 @@ void ST25R95::select_14443_a_protocol(
 
 uint32_t ST25R95::get_tag_value(char *tab)
 {
-    send_receive_command();
-    if (read_response()) {
-        tag_value_32 = ((uint32_t)response[0] << 24) | ((uint32_t)response[1] << 16)
-                | ((uint32_t)response[2] << 8) | ((uint32_t)response[3] << 0);
-        for (size_t i = 0; i < response_length; i++) {
-            tab[i] = response[i];
-        }
-        return tag_value_32;
-    } else {
-        return 0;
+    tag_value_32 = ((uint32_t)response[0] << 24) | ((uint32_t)response[1] << 16)
+            | ((uint32_t)response[2] << 8) | ((uint32_t)response[3] << 0);
+    for (size_t i = 0; i < response_length; i++) {
+        tab[i] = response[i];
     }
+    return tag_value_32;
 }
 
 void ST25R95::send_receive_command()
@@ -187,5 +182,31 @@ void ST25R95::send_receive_command()
             break;
         default:
             break;
+    }
+}
+
+bool ST25R95::tag_is_detected()
+{
+    send_receive_command();
+    if (read_response()) {
+        if (response_code == 0x80) {
+            return true;
+        }
+        return false;
+    }
+    return false;
+}
+
+uint8_t ST25R95::get_error_value()
+{
+    return response_code;
+}
+
+bool ST25R95::no_multiple_tag()
+{
+    if (response[5] == 0xB8) {
+        return false;
+    } else {
+        return true;
     }
 }

@@ -72,6 +72,21 @@ public:
      */
     uint32_t get_tag_value(char *tab);
 
+    /*! Tag is detected
+     * \return true if tag is detected or false if no tag is detecteds
+     */
+    bool tag_is_detected();
+
+    /*! get error value
+     * \return error_value
+     */
+    uint8_t get_error_value();
+    
+    /*! detect if you present multiple tag
+     * \return true if you have a single tag false if you have multiple tag present
+     */
+    bool no_multiple_tag();
+
 private:
     /*! SendRecv command to receive tag information
      *
