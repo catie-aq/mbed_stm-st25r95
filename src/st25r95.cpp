@@ -140,21 +140,38 @@ void ST25R95::select_14443_a_protocol(
         _spi_address->write(data_rate); // Data Rate
         _spi_address->write(pp); // PP
         _spi_address->write(mm); // MM
-        _spi_address->write(dd); // DD
+        _spi_address->write(dd); // DDs
         _chip_select->write(1);
     }
 
     _protocol_select = 0x02;
 }
 
-uint32_t ST25R95::get_tag_value(char *tab)
+uint8_t ST25R95::protocol(uint8_t protocol)
+{
+    switch (protocol) {
+        case 0x02:
+            select_14443_a_protocol();
+            break;
+
+        default:
+            break;
+    }
+    return protocol;
+}
+
+uint32_t ST25R95::get_tag_value()
 {
     tag_value_32 = ((uint32_t)response[0] << 24) | ((uint32_t)response[1] << 16)
             | ((uint32_t)response[2] << 8) | ((uint32_t)response[3] << 0);
+    return tag_value_32;
+}
+
+void ST25R95::fill_response(char *tab)
+{
     for (size_t i = 0; i < response_length; i++) {
         tab[i] = response[i];
     }
-    return tag_value_32;
 }
 
 void ST25R95::send_receive_command()

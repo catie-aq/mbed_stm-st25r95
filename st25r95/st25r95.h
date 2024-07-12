@@ -6,6 +6,29 @@
 #define CATIE_SIXTRON_ST25R95_H_
 #include "mbed.h"
 
+#define EEmdSOFerror23 0X63 // SOF error in high part (duration 2 to 3 etu) in ISO/IEC 14443B
+#define EEmdSOFerror10 0x65 // SOF error in low part (duration 10 to 11 etu) in ISO/IEC 14443B
+#define EEmdEgt 0x66 // Error Extennded Guard Time error in ISO/IEC 14443B
+#define ETr1_Too_Big 0x67 // Too long TR1 send by the card, reception stopped in ISO/IEC 14443BT
+#define ETr1Too_small 0X68 // Too small TR1 send by the card in ISO/IEC 14443B
+#define EinternalError 0X71 // Wong frame format decodes
+#define EFrameRecvOK 0x80 // Frame correctly received (additionally see CRC/Parity information)
+#define EInvalidCmdLen 0X82 // Invalid command length
+#define EInvalidProto 0X83 // Invalid protocol
+#define EUserStop 0X85 // Stopped by user (used only in Card mode)
+#define ECommError 0X86 // Hardware communication error
+#define EFrameWaitTOut 0X87 // Frame wait time out (no valid reception)
+#define EInvalidSof 0X88 // Invalid SOF
+#define EBufOverflow 0X89 // Too many bytes received and data still arriving
+#define EFramingError 0X8A // if start bit = 1 or stop bit = 0
+#define EEgtError 0X8B // EGT time out
+#define EInvalidLen 0X8C // Valid for FeliCa™, if Length <3
+#define ECrcError 0X8D // CRC error, Valid only for FeliCa™
+#define ERecvLost 0X8E // When reception is lost without EOF received (or subcarrier was lost)
+#define ENoField 0X8F // When Listen command detects the absence of external field
+#define EUnintByte                                                                                 \
+    0X90 // Residual bits in last byte. Useful for ACK/NAK reception of ISO/IEC 14443 Type A
+
 class ST25R95 {
 public:
     /*! Default Constructor
@@ -67,10 +90,14 @@ public:
             uint8_t dd = 0);
 
     /*! Get Tag Value
-     * \param tab Pointer to a char to fill it with IDN value
      * \return Tag Value in uint32_t to simply compare two tag value
      */
-    uint32_t get_tag_value(char *tab);
+    uint32_t get_tag_value();
+
+    /*! fill char with response
+     * \param tab Pointer to a char to fill it with IDN value
+     */
+    void fill_response(char *tab);
 
     /*! Tag is detected
      * \return true if tag is detected or false if no tag is detecteds
@@ -81,11 +108,16 @@ public:
      * \return error_value
      */
     uint8_t get_error_value();
-    
+
     /*! detect if you present multiple tag
      * \return true if you have a single tag false if you have multiple tag present
      */
     bool no_multiple_tag();
+
+    /*! Select protocol as you want
+     *  \param protocol ID of protocol you want to use
+     */
+    uint8_t protocol(uint8_t protocol);
 
 private:
     /*! SendRecv command to receive tag information
